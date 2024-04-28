@@ -33,7 +33,6 @@ public class GameState {
 	private boolean shipInvincible;
 	private int shipAlpha;
 	private int level;
-	
 
 	public GameState() {
 		this.asteroids = new ArrayList<>();
