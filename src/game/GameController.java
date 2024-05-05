@@ -1,6 +1,7 @@
 package game;
 
 import main.Settings;
+import spaceObjects.Spaceship;
 
 public class GameController {
 
@@ -12,6 +13,7 @@ public class GameController {
     private boolean gamePaused;
     private boolean gameActive;
     private GuiThread guiThread;
+    private GameThread gameThread;
 
     public static GameController getInstance() {
         if (instance == null) {
@@ -42,7 +44,7 @@ public class GameController {
         this.currentDelay = Settings.GAME_DELAY;
         this.currentMaxAsteroids = Settings.MAX_ASTEROIDS;
         this.gameActive = false;
-        startThreads();
+         startThreads();
 
     }
 
@@ -99,44 +101,83 @@ public class GameController {
             }
         }
     }
+        private void startThreads() {
+            // Initialisiere den GuiThread
+            guiThread = new GuiThread();
+            // Starte den GuiThread
+            guiThread.start();
+            if (gameThread == null || !gameThread.isAlive()) {
+                gameThread = new GameThread(this);
+                gameThread.start();
+            }
 
-    private void startThreads() {
-        // Initialisiere den GuiThread
-        guiThread = new GuiThread();
-        // Starte den GuiThread
-        guiThread.start();
+        }
 
-    }
+        private void interruptThreads() {
+            if (guiThread != null) {
+                guiThread.interrupt();
+                guiThread = null;
+            }
+        }
 
-    private void interruptThreads() {
-        if (guiThread != null) {
-            guiThread.interrupt();
-            guiThread = null;
+
+        /* *** Aufgabe (2b) *** */
+
+    private class GameThread extends Thread {
+        private GameController gameController;
+
+        public GameThread(GameController gameController) {
+            super("Game Thread");
+            this.gameController = gameController;
+        }
+
+        private boolean running = true;
+
+        @Override
+        public void run() {
+
+            GameController gameControllerInstance = GameController.getInstance();
+            while (running) {
+                gameState.checkCollisions();
+                gameState.moveObjects();
+                gameState.addScore(1);
+
+                // Bewegung des Raumschiffs
+                Spaceship playerShip = gameState.getSpaceShip();
+                if (playerShip != null && gameControllerInstance.isActive() && !gameControllerInstance.isPaused()) {
+                    playerShip.move();
+                }
+
+                try {
+                    Thread.sleep(Settings.GAME_DELAY);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void stopLoop() {
+            running = false;
         }
     }
 
 
-    /* *** Aufgabe (2b) *** */
+        /* *** Aufgabe (3b) *** */
 
 
 
 
-    /* *** Aufgabe (3b) *** */
+        /* *** Aufgabe (4a) *** */
 
 
 
 
-    /* *** Aufgabe (4a) *** */
+        /* *** Aufgabe (4b) *** */
 
 
 
 
-    /* *** Aufgabe (4b) *** */
+        /* *** Aufgabe (4c) *** */
 
 
-
-
-    /* *** Aufgabe (4c) *** */
-
-
-}
+    }

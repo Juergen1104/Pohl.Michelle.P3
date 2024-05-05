@@ -25,6 +25,11 @@ public class Missile extends SpaceObject {
 	/* *** Aufgabe (2b) *** */
 	public void move() {
 	//	TODO
+
+		setX((float)(getX() + getVx()));
+		setY((float)(getY() + getVy()));
+
+		setBoundingBox();
 	}
 
 	//box around missile for sat unit collision detection

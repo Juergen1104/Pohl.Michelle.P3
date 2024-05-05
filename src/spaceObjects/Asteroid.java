@@ -8,194 +8,190 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Asteroid extends SpaceObject {
-	private AsteroidSize size;
+    private AsteroidSize size;
 
-	public enum AsteroidSize {
+    public enum AsteroidSize {
 
-		TINY(20), SMALL(40), NORMAL(70), LARGE(90);
+        TINY(20), SMALL(40), NORMAL(70), LARGE(90);
 
-		public int value;
+        public int value;
 
-		private AsteroidSize(int value) {
-			this.value = value;
-		}
-	}
+        private AsteroidSize(int value) {
+            this.value = value;
+        }
+    }
 
-	/* *** Aufgabe (3a) *** */
-	public Asteroid() {
-		//		TODO
-	}
+    /* *** Aufgabe (3a) *** */
+    public Asteroid() {
+        //		TODO
+    }
 
-	
-	
-	// only for splitting asteroids
-	private Asteroid(float x, float y, double vx, double vy, AsteroidSize size) {
-		this.x = x;
-		this.y = y;
-		this.vx = vx;
-		this.vy = vy;
-		this.size = size;
-		this.width = size.value;
-		this.height = size.value;
-		this.generateRandomShape();
+    // only for splitting asteroids
+    private Asteroid(float x, float y, double vx, double vy, AsteroidSize size) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.size = size;
+        this.width = size.value;
+        this.height = size.value;
+        this.generateRandomShape();
 
-	}
+    }
 
-	public AsteroidSize getSize() {
-		return this.size;
-	}
+    public AsteroidSize getSize() {
+        return this.size;
+    }
 
-	public int getPoints() {
-		switch (this.size) {
-		case LARGE:
-			return 100;
-		case NORMAL:
-			return 300;
-		case SMALL:
-			return 500;
-		case TINY:
-			return 1000;
-		default:
-			return 100;
+    public int getPoints() {
+        switch (this.size) {
+            case LARGE:
+                return 100;
+            case NORMAL:
+                return 300;
+            case SMALL:
+                return 500;
+            case TINY:
+                return 1000;
+            default:
+                return 100;
 
-		}
-	}
+        }
+    }
 
-	/* *** Aufgabe (2b) *** */
-	public void move() {
+    /* *** Aufgabe (2b) *** */
+    public void move() {
 //		TODO
-	}
+    }
 
-	/* *** Aufgabe (3c) *** */
-	
-	//split asteroids TODO
+    /* *** Aufgabe (3c) *** */
 
-	
-	
-	// generates shape based on size
-	private void generateRandomShape() {
-		int numberOfPoints;
-		switch (this.size) {
-		case LARGE:
-			numberOfPoints = 18;
-			break;
-		case NORMAL:
-			numberOfPoints = 16;
-			break;
-		case SMALL:
-			numberOfPoints = 15;
-			break;
-		case TINY:
-			numberOfPoints = 12;
-			break;
-		default:
-			numberOfPoints = 15;
-			break;
-		}
-		this.shape = this.generateRandomConvexPolygon(numberOfPoints);
-		for (int i = 0; i < numberOfPoints; i++) {
-			this.shape.get(i).x += this.x;
-			this.shape.get(i).y += this.y;
-		}
+    //split asteroids TODO
 
-	}
+    // generates shape based on size
+    private void generateRandomShape() {
+        int numberOfPoints;
+        switch (this.size) {
+            case LARGE:
+                numberOfPoints = 18;
+                break;
+            case NORMAL:
+                numberOfPoints = 16;
+                break;
+            case SMALL:
+                numberOfPoints = 15;
+                break;
+            case TINY:
+                numberOfPoints = 12;
+                break;
+            default:
+                numberOfPoints = 15;
+                break;
+        }
+        this.shape = this.generateRandomConvexPolygon(numberOfPoints);
+        for (int i = 0; i < numberOfPoints; i++) {
+            this.shape.get(i).x += this.x;
+            this.shape.get(i).y += this.y;
+        }
 
-	// https://cglab.ca/~sander/misc/ConvexGeneration/convex.html
-	// creates convex polygon with n edges
-		private List<Point2D.Double> generateRandomConvexPolygon(int n) {
-			List<Double> xValues = new ArrayList<>(n);
-			List<Double> yValues = new ArrayList<>(n);
+    }
 
-			for (int i = 0; i < n; i++) {
-				xValues.add(ThreadLocalRandom.current().nextDouble(-this.size.value, this.size.value));
-				yValues.add(ThreadLocalRandom.current().nextDouble(-this.size.value, this.size.value));
-			}
+    // https://cglab.ca/~sander/misc/ConvexGeneration/convex.html
+    // creates convex polygon with n edges
+    private List<Point2D.Double> generateRandomConvexPolygon(int n) {
+        List<Double> xValues = new ArrayList<>(n);
+        List<Double> yValues = new ArrayList<>(n);
 
-			Collections.sort(xValues);
-			Collections.sort(yValues);
+        for (int i = 0; i < n; i++) {
+            xValues.add(ThreadLocalRandom.current().nextDouble(-this.size.value, this.size.value));
+            yValues.add(ThreadLocalRandom.current().nextDouble(-this.size.value, this.size.value));
+        }
 
-			Double minX = xValues.get(0);
-			Double minY = yValues.get(0);
-			
-			Double maxX = xValues.get(n - 1);
-			Double maxY = yValues.get(n - 1);
+        Collections.sort(xValues);
+        Collections.sort(yValues);
 
-			List<Double> xVec = new ArrayList<>(n);
-			List<Double> yVec = new ArrayList<>(n);
+        Double minX = xValues.get(0);
+        Double minY = yValues.get(0);
 
-			double lastTop = minX;
-			double lastBot = minX;
+        Double maxX = xValues.get(n - 1);
+        Double maxY = yValues.get(n - 1);
 
-			for (int i = 1; i < n - 1; i++) {
-				double x = xValues.get(i);
+        List<Double> xVec = new ArrayList<>(n);
+        List<Double> yVec = new ArrayList<>(n);
 
-				if (ThreadLocalRandom.current().nextBoolean()) {
-					xVec.add(x - lastTop);
-					lastTop = x;
-				} else {
-					xVec.add(lastBot - x);
-					lastBot = x;
-				}
-			}
+        double lastTop = minX;
+        double lastBot = minX;
 
-			xVec.add(maxX - lastTop);
-			xVec.add(lastBot - maxX);
+        for (int i = 1; i < n - 1; i++) {
+            double x = xValues.get(i);
 
-			double lastLeft = minY;
-			double lastRight = minY;
+            if (ThreadLocalRandom.current().nextBoolean()) {
+                xVec.add(x - lastTop);
+                lastTop = x;
+            } else {
+                xVec.add(lastBot - x);
+                lastBot = x;
+            }
+        }
 
-			for (int i = 1; i < n - 1; i++) {
-				double y = yValues.get(i);
+        xVec.add(maxX - lastTop);
+        xVec.add(lastBot - maxX);
 
-				if (ThreadLocalRandom.current().nextBoolean()) {
-					yVec.add(y - lastLeft);
-					lastLeft = y;
-				} else {
-					yVec.add(lastRight - y);
-					lastRight = y;
-				}
-			}
+        double lastLeft = minY;
+        double lastRight = minY;
 
-			yVec.add(maxY - lastLeft);
-			yVec.add(lastRight - maxY);
+        for (int i = 1; i < n - 1; i++) {
+            double y = yValues.get(i);
 
-			Collections.shuffle(yVec);
+            if (ThreadLocalRandom.current().nextBoolean()) {
+                yVec.add(y - lastLeft);
+                lastLeft = y;
+            } else {
+                yVec.add(lastRight - y);
+                lastRight = y;
+            }
+        }
 
-			List<Point2D.Double> vec = new ArrayList<>(n);
+        yVec.add(maxY - lastLeft);
+        yVec.add(lastRight - maxY);
 
-			for (int i = 0; i < n; i++) {
-				vec.add(new Point2D.Double(xVec.get(i), yVec.get(i)));
-			}
+        Collections.shuffle(yVec);
 
-			Collections.sort(vec, Comparator.comparingDouble(v -> Math.atan2(v.getY(), v.getX())));
+        List<Point2D.Double> vec = new ArrayList<>(n);
 
-			double x = 0;
-			double y = 0;
-			
-			double minPolygonX = 0;
-			double minPolygonY = 0;
-			
-			List<Point2D.Double> points = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            vec.add(new Point2D.Double(xVec.get(i), yVec.get(i)));
+        }
 
-			for (int i = 0; i < n; i++) {
-				points.add(new Point2D.Double(x, y));
+        Collections.sort(vec, Comparator.comparingDouble(v -> Math.atan2(v.getY(), v.getX())));
 
-				x += vec.get(i).getX();
-				y += vec.get(i).getY();
+        double x = 0;
+        double y = 0;
 
-				minPolygonX = Math.min(minPolygonX, x);
-				minPolygonY = Math.min(minPolygonY, y);
-			}
+        double minPolygonX = 0;
+        double minPolygonY = 0;
 
-			double xShift = minX - minPolygonX;
-			double yShift = minY - minPolygonY;
+        List<Point2D.Double> points = new ArrayList<>(n);
 
-			for (int i = 0; i < n; i++) {
-				Point2D.Double p = points.get(i);
-				points.set(i, new Point2D.Double(p.x + xShift, p.y + yShift));
-			}
+        for (int i = 0; i < n; i++) {
+            points.add(new Point2D.Double(x, y));
 
-			return points;
-		}
+            x += vec.get(i).getX();
+            y += vec.get(i).getY();
+
+            minPolygonX = Math.min(minPolygonX, x);
+            minPolygonY = Math.min(minPolygonY, y);
+        }
+
+        double xShift = minX - minPolygonX;
+        double yShift = minY - minPolygonY;
+
+        for (int i = 0; i < n; i++) {
+            Point2D.Double p = points.get(i);
+            points.set(i, new Point2D.Double(p.x + xShift, p.y + yShift));
+        }
+
+        return points;
+    }
 
 }
