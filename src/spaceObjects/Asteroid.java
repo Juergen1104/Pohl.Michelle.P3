@@ -1,5 +1,7 @@
 package spaceObjects;
 
+import main.Settings;
+
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +25,45 @@ public class Asteroid extends SpaceObject {
 
     /* *** Aufgabe (3a) *** */
     public Asteroid() {
-        //		TODO
+        this.size = AsteroidSize.values()[(int) (Math.random() * AsteroidSize.values().length)];
+
+        double x, y;
+        switch (ThreadLocalRandom.current().nextInt(4)) {
+            case 0: // links außerhalb
+                x = -50;
+                y = ThreadLocalRandom.current().nextInt(50, Settings.HEIGHT - 50);
+                break;
+            case 1: // rechts außerhalb
+                x = Settings.WIDTH + 50;
+                y = ThreadLocalRandom.current().nextInt(50, Settings.HEIGHT - 50);
+                break;
+            case 2: // oben außerhalb
+                x = ThreadLocalRandom.current().nextInt(50, Settings.WIDTH - 50);
+                y = -50;
+                break;
+            case 3: // unten außerhalb
+                x = ThreadLocalRandom.current().nextInt(50, Settings.WIDTH - 50);
+                y = Settings.HEIGHT + 50;
+                break;
+            default:
+                x = 0;
+                y = 0;
+                break;
+        }
+        this.x = (float) x;
+        this.y = (float) y;
+
+        // Zufälliger Radiant für Flugrichtung
+        double radiant = Math.random() * Math.PI; // zufälliger Wert zwischen 0 und Math.PI
+
+        // Zufällige Geschwindigkeit zwischen 2 und 4
+        double speed = ThreadLocalRandom.current().nextDouble(2, 4);
+        this.vx = speed * Math.cos(radiant);
+        this.vy = speed * Math.sin(radiant);
+
+        // Generiere die zufällige Form des Asteroiden
+        generateRandomShape();
+
     }
 
     // only for splitting asteroids
@@ -61,12 +101,52 @@ public class Asteroid extends SpaceObject {
 
     /* *** Aufgabe (2b) *** */
     public void move() {
-//		TODO
+        this.x = (float) +this.vx;
+        this.y = (float) +this.vy;
+
+        //this.shape.setsetShape();
     }
 
     /* *** Aufgabe (3c) *** */
 
-    //split asteroids TODO
+    public List<Asteroid> splitAsteroid() {
+
+        List<Asteroid> newAsteroids = new ArrayList<>();
+        if (size == AsteroidSize.TINY) {
+            return newAsteroids;
+        }
+        if (size == AsteroidSize.SMALL) {
+            newAsteroids.add(createNewAsteroid(AsteroidSize.TINY));
+            newAsteroids.add(createNewAsteroid(AsteroidSize.TINY));
+        } else if (size == AsteroidSize.NORMAL) {
+            newAsteroids.add(createNewAsteroid(AsteroidSize.SMALL));
+            newAsteroids.add(createNewAsteroid(AsteroidSize.TINY));
+        } else if (size == AsteroidSize.LARGE) {
+            newAsteroids.add(createNewAsteroid(AsteroidSize.NORMAL));
+            newAsteroids.add(createNewAsteroid(AsteroidSize.SMALL));
+            newAsteroids.add(createNewAsteroid(AsteroidSize.TINY));
+        }
+
+        return newAsteroids;
+    }
+
+    private Asteroid createNewAsteroid(AsteroidSize newSize) {
+        // Calculate new velocity vector with adjusted direction
+        double angle = Math.PI / 8; // 22.5 degrees in radians
+
+        double newVxUp = vx * Math.cos(angle) - vy * Math.sin(angle);
+        double newVyUp = vx * Math.sin(angle) + vy * Math.cos(angle);
+
+        double newVxDown = vx * Math.cos(-angle) - vy * Math.sin(-angle);
+        double newVyDown = vx * Math.sin(-angle) + vy * Math.cos(-angle);
+
+        // Create new Asteroid with adjusted velocity and position
+        if (newSize == AsteroidSize.TINY) {
+            return new Asteroid(x + 10, y + 10, newVxUp, newVyUp, newSize);
+        } else {
+            return new Asteroid(x - 10, y - 10, newVxDown, newVyDown, newSize);
+        }
+    }
 
     // generates shape based on size
     private void generateRandomShape() {

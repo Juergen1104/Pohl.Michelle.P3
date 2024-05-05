@@ -331,7 +331,7 @@ public class GameState {
             this.missilesUfo.removeAll(hitMissiles);
             for (Asteroid asteroid : hitAsteroids) {
                 if (asteroid.getSize().value >= AsteroidSize.SMALL.value) {
-                    //this.asteroids.addAll(asteroid.splitAsteroid()); //uncomment TODO
+                    this.asteroids.addAll(asteroid.splitAsteroid());
                 }
             }
 
@@ -343,7 +343,7 @@ public class GameState {
                         this.asteroids.remove(asteroid);
                         this.ufo = null;
                         if (asteroid.getSize().value >= AsteroidSize.SMALL.value) {
-                            //this.asteroids.addAll(asteroid.splitAsteroid()); //uncomment TODO
+                            this.asteroids.addAll(asteroid.splitAsteroid());
                         }
                         return;
                     }
@@ -362,7 +362,7 @@ public class GameState {
                         if (this.lives > 0) {
                             this.asteroids.remove(asteroid);
                             if (asteroid.getSize().value >= AsteroidSize.SMALL.value) {
-                                //this.asteroids.addAll(asteroid.splitAsteroid()); //uncomment TODO
+                                this.asteroids.addAll(asteroid.splitAsteroid());
                             }
                         }
 

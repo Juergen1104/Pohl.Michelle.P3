@@ -58,10 +58,6 @@ public class Spaceship extends SpaceObject {
     public void move() {
         //	TODO
         double vectorLength = Math.sqrt(getVelocityX() * getVelocityX() + getVelocityY() * getVelocityY());
-//        if (vectorLength > 0) {
-//            System.out.println("before Vektorlength: " + vectorLength + " vx: " + getVx() + " vy " + getVy() + "  x :" + getX() + " y: " + getY());
-//        }
-
 
         if (vectorLength > Settings.SHIP_DECELERATION) {
             double ratio = (vectorLength - Settings.SHIP_DECELERATION) / vectorLength;
@@ -87,15 +83,7 @@ public class Spaceship extends SpaceObject {
         // Verschieben der Position basierend auf der Geschwindigkeit
         setX((float) (getPositionX() + getVelocityX()));
         setY((float) (getPositionY() + getVelocityY()));
-
-
-
-        // Aktualisierung der Form (z. B. Polygon) basierend auf neuer Position
         setShape();
-
-//        if (vectorLength > 0) {
-//            System.out.println("after Vektorlength: " + vectorLength + " vx: " + getVx() + " vy " + getVy() + "  x :" + getX() + " y: " + getY());
-//        }
 
     }
 

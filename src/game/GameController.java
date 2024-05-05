@@ -14,6 +14,7 @@ public class GameController {
     private boolean gameActive;
     private GuiThread guiThread;
     private GameThread gameThread;
+    private SpawnThread spawnThread;
 
     public static GameController getInstance() {
         if (instance == null) {
@@ -43,6 +44,7 @@ public class GameController {
         this.gameFrame = new GameFrame();
         this.currentDelay = Settings.GAME_DELAY;
         this.currentMaxAsteroids = Settings.MAX_ASTEROIDS;
+
         this.gameActive = false;
          startThreads();
 
@@ -110,6 +112,8 @@ public class GameController {
                 gameThread = new GameThread(this);
                 gameThread.start();
             }
+            this.spawnThread = new SpawnThread();
+            spawnThread.start();
 
         }
 
@@ -118,6 +122,7 @@ public class GameController {
                 guiThread.interrupt();
                 guiThread = null;
             }
+            spawnThread.interrupt();
         }
 
 
@@ -130,7 +135,6 @@ public class GameController {
             super("Game Thread");
             this.gameController = gameController;
         }
-
         private boolean running = true;
 
         @Override
@@ -164,7 +168,21 @@ public class GameController {
 
         /* *** Aufgabe (3b) *** */
 
-
+    private class SpawnThread extends Thread {
+        @Override
+        public void run() {
+            while (!Thread.interrupted()) {
+                if (gameState.getAsteroids().size() < Settings.MAX_ASTEROIDS) {
+                    gameState.spawnAsteroid();
+                }
+                try {
+                    Thread.sleep(Settings.ASTEROIDS_SPAWNRATE);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+    }
 
 
         /* *** Aufgabe (4a) *** */
