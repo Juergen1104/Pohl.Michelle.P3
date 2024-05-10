@@ -323,7 +323,6 @@ public class GameFrame extends JFrame {
     }
 
     /* *** Aufgabe (1b) *** */
-    // CustomKeyListener TODO
 
     private class CustomKeyListener implements KeyListener {
         @Override

@@ -2,6 +2,11 @@ package game;
 
 import main.Settings;
 import spaceObjects.Spaceship;
+import spaceObjects.Ufo;
+
+import java.util.concurrent.ThreadLocalRandom;
+
+import static main.Settings.UFO_SPAWNRATE;
 
 public class GameController {
 
@@ -15,6 +20,9 @@ public class GameController {
     private GuiThread guiThread;
     private GameThread gameThread;
     private SpawnThread spawnThread;
+    private UfoThread ufoThread;
+    private InvincibilityThread invincibilityThread;
+    private IncreaseDifficultyThread increaseDifficultyThread;
 
     public static GameController getInstance() {
         if (instance == null) {
@@ -44,10 +52,8 @@ public class GameController {
         this.gameFrame = new GameFrame();
         this.currentDelay = Settings.GAME_DELAY;
         this.currentMaxAsteroids = Settings.MAX_ASTEROIDS;
-
         this.gameActive = false;
-         startThreads();
-
+        startThreads();
     }
 
     public void startNewGame() {
@@ -63,7 +69,6 @@ public class GameController {
     public void gameOver() {
         interruptThreads();
         this.updateGui();
-
     }
 
     public void updateGui() {
@@ -72,18 +77,33 @@ public class GameController {
 
     /* *** Aufgabe (4d) *** */
     public void togglePause() {
-
-        //	TODO
+        if (gamePaused) {
+            // Fortsetzen aller Threads
+            guiThread.continueThread();
+            gameThread.continueThread();
+            spawnThread.continueThread();
+            ufoThread.continueThread();
+            invincibilityThread.continueThread();
+            increaseDifficultyThread.continueThread();
+        } else {
+            // Pausieren aller Threads
+            guiThread.pause();
+            gameThread.pause();
+            spawnThread.pause();
+            ufoThread.pause();
+            invincibilityThread.pause();
+            increaseDifficultyThread.pause();
+        }
+        // Umkehrung des gamePaused-Status
+        gamePaused = !gamePaused;
 
         // refresh gui for pause screen
         this.updateGui();
-
     }
-
 
     /* *** Aufgabe (1a) *** */
 
-    private class GuiThread extends Thread {
+    private class GuiThread extends PausableThread {
         @Override
         public void run() {
             // Ändere den Namen des Threads
@@ -103,43 +123,75 @@ public class GameController {
             }
         }
     }
-        private void startThreads() {
-            // Initialisiere den GuiThread
-            guiThread = new GuiThread();
-            // Starte den GuiThread
-            guiThread.start();
-            if (gameThread == null || !gameThread.isAlive()) {
-                gameThread = new GameThread(this);
-                gameThread.start();
-            }
-            this.spawnThread = new SpawnThread();
-            spawnThread.start();
 
+    private void startThreads() {
+        // Initialisiere den GuiThread
+        guiThread = new GuiThread();
+        // Starte den GuiThread
+        guiThread.start();
+        if (gameThread == null || !gameThread.isAlive()) {
+            gameThread = new GameThread(this);
+            gameThread.start();
+        }
+        this.spawnThread = new SpawnThread();
+        spawnThread.start();
+
+        if (ufoThread == null || !ufoThread.isAlive()) {
+            ufoThread = new UfoThread();
+            ufoThread.start();
         }
 
-        private void interruptThreads() {
-            if (guiThread != null) {
-                guiThread.interrupt();
-                guiThread = null;
-            }
-            spawnThread.interrupt();
+        invincibilityThread = new InvincibilityThread();
+        invincibilityThread.start();
+
+        increaseDifficultyThread = new IncreaseDifficultyThread();
+        increaseDifficultyThread.start();
+
+    }
+
+    private void interruptThreads() {
+        if (guiThread != null) {
+            guiThread.interrupt();
+            guiThread = null;
+        }
+        spawnThread.interrupt();
+
+        if (ufoThread != null) {
+            ufoThread.interrupt();
+            ufoThread = null;
         }
 
+        if (invincibilityThread != null) {
+            invincibilityThread.interrupt();
+            invincibilityThread = null;
+        }
+        if (increaseDifficultyThread != null) {
+            increaseDifficultyThread.interrupt();
+            increaseDifficultyThread = null;
+        }
 
-        /* *** Aufgabe (2b) *** */
+    }
 
-    private class GameThread extends Thread {
+    public void startInvincibleThread() {
+        invincibilityThread = new InvincibilityThread();
+        invincibilityThread.start();
+    }
+
+
+    /* *** Aufgabe (2b) *** */
+
+    private class GameThread extends PausableThread {
         private GameController gameController;
 
         public GameThread(GameController gameController) {
-            super("Game Thread");
+            //super("Game Thread");
             this.gameController = gameController;
         }
+
         private boolean running = true;
 
         @Override
         public void run() {
-
             GameController gameControllerInstance = GameController.getInstance();
             while (running) {
                 gameState.checkCollisions();
@@ -166,9 +218,9 @@ public class GameController {
     }
 
 
-        /* *** Aufgabe (3b) *** */
+    /* *** Aufgabe (3b) *** */
 
-    private class SpawnThread extends Thread {
+    private class SpawnThread extends PausableThread {
         @Override
         public void run() {
             while (!Thread.interrupted()) {
@@ -185,17 +237,91 @@ public class GameController {
     }
 
 
-        /* *** Aufgabe (4a) *** */
+    /* *** Aufgabe (4a) *** */
 
+    private class UfoThread extends PausableThread {
+        @Override
+        public void run() {
+            while (!Thread.interrupted()) {
+                if (isActive()) {
+                    try {
+                        Thread.sleep(UFO_SPAWNRATE);
+                        GameController gameControllerInstance = GameController.getInstance();
 
+                        if (!gameState.ufoActive()) {
+                            gameState.spawnUfo();
+                            Thread.sleep(1000);
+                        }
+                        Ufo ufo = gameState.getUfo();
+                        while (gameControllerInstance.isActive()) {
+                            Thread.sleep(400);
+                            ufo.changeVelocity();
+                            Thread.sleep(200);
+                            // Mit 20% Wahrscheinlichkeit ein Projektil abfeuern
+                            gameState.shootMissileUfo();
 
-
-        /* *** Aufgabe (4b) *** */
-
-
-
-
-        /* *** Aufgabe (4c) *** */
-
-
+                            if (ThreadLocalRandom.current().nextInt(1, 101) <= 20) {
+                                gameState.shootMissileUfo();
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
     }
+
+    /* *** Aufgabe (4b) *** */
+
+    private class InvincibilityThread extends PausableThread {
+        private long remainingTime;
+
+        public InvincibilityThread() {
+            remainingTime = Settings.SHIP_INVINCIBLE_TIME;
+        }
+
+        @Override
+        public void run() {
+            while (remainingTime > 0 && !Thread.interrupted()) {
+                gameState.setInvincible();
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                remainingTime -= 10;
+            }
+            gameState.setVulnerable();
+        }
+    }
+
+    /* *** Aufgabe (4c) *** */
+    private class IncreaseDifficultyThread extends PausableThread {
+        @Override
+        public void run() {
+            while (!Thread.interrupted()) {
+                try {
+                    Thread.sleep(Settings.INCREASE_DIFFICULTY_DELAY); // Wartezeit für Schwierigkeitserhöhung
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+
+                GameState gameState = GameController.getInstance().getGameState();
+                gameState.increaseLevel();
+
+                if (currentDelay > 10) {
+                    currentDelay--; // Reduziere Verzögerung, solange sie über 10 ist
+                }
+                if (currentMaxAsteroids < 40) {
+                    currentMaxAsteroids++; // Erhöhe maximale Anzahl an Asteroiden
+                }
+
+                if (gameState.getLevel() % 2 == 0) {
+                    gameState.setLives(gameState.getLives() + 1);
+                }
+            }
+        }
+    }
+}
+

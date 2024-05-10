@@ -109,6 +109,10 @@ public class GameState {
         return this.lives;
     }
 
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+
     public boolean isAccelerating() {
         return this.upPressed;
     }
@@ -234,7 +238,6 @@ public class GameState {
 
     /* *** Aufgabe (2b) *** */
 
-    //	TODO
     public void moveObjects() {
         moveShip();
         moveMissiles();
@@ -300,7 +303,14 @@ public class GameState {
     /* *** Aufgabe (4b) *** */
 
     private void shipGotHit() {
-        //		TODO
+
+        loseLife();
+        if (getLives() == 0) {
+            GameController.getInstance().gameOver();
+        } else {
+            spaceShip.resetPosition(); // Schiffposition zurücksetzen
+            GameController.getInstance().startInvincibleThread();
+        }
     }
 
     /// ---Collision detection and helper methods---

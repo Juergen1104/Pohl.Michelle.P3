@@ -66,7 +66,6 @@ public class Ufo extends SpaceObject {
 			this.x = 0;
 			this.y = 0;
 		}
-
 	}
 
 	public synchronized void move() {
@@ -84,7 +83,13 @@ public class Ufo extends SpaceObject {
 	}
 
 	/* *** Aufgabe (4a) *** */
-	
-	//change velocity TODO
-	
+
+	public void changeVelocity() {
+		// Mit 50% Wahrscheinlichkeit entweder vy auf 2 oder -2 setzen
+		if (ThreadLocalRandom.current().nextBoolean()) {
+			vy = 2;
+		} else {
+			vy = -2;
+		}
+	}
 }

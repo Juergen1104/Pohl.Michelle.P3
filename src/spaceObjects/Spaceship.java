@@ -26,15 +26,11 @@ public class Spaceship extends SpaceObject {
     public void rotateLeft() {
         //	TODO
         setRadiant((getRadiant() - Settings.SHIP_ROTATIONSPEED));
-        System.out.println("left " + getRadiant());
     }
 
     public void rotateRight() {
         //	TODO
         setRadiant((getRadiant() + Settings.SHIP_ROTATIONSPEED));
-
-        System.out.println("right " + getRadiant());
-
     }
 
     public void accelerate() {
@@ -105,7 +101,5 @@ public class Spaceship extends SpaceObject {
         this.vx = 0;
         this.vy = 0;
         this.radiant = 1.5 * Math.PI;
-
     }
-
 }

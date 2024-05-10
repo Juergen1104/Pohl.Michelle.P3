@@ -1,5 +1,7 @@
 package spaceObjects;
 
+import game.GameController;
+import game.GameState;
 import main.Settings;
 
 import java.awt.geom.Point2D;
@@ -13,11 +15,8 @@ public class Asteroid extends SpaceObject {
     private AsteroidSize size;
 
     public enum AsteroidSize {
-
         TINY(20), SMALL(40), NORMAL(70), LARGE(90);
-
         public int value;
-
         private AsteroidSize(int value) {
             this.value = value;
         }
@@ -52,10 +51,8 @@ public class Asteroid extends SpaceObject {
         }
         this.x = (float) x;
         this.y = (float) y;
-
         // Zufälliger Radiant für Flugrichtung
         double radiant = Math.random() * Math.PI; // zufälliger Wert zwischen 0 und Math.PI
-
         // Zufällige Geschwindigkeit zwischen 2 und 4
         double speed = ThreadLocalRandom.current().nextDouble(2, 4);
         this.vx = speed * Math.cos(radiant);
@@ -103,9 +100,18 @@ public class Asteroid extends SpaceObject {
     public void move() {
         this.x = (float) +this.vx;
         this.y = (float) +this.vy;
-
-        //this.shape.setsetShape();
+        setShape();
     }
+
+    public void setShape() {
+        // Nehmen wir an, die shape-Liste enthält die Koordinatenpunkte der Eckpunkte des Asteroiden
+        for (Point2D.Double point : shape) {
+            point.x += x;  // Aktualisiere die x-Koordinate des Punkts um die aktuelle x-Position des Asteroiden
+            point.y += y;  // Aktualisiere die y-Koordinate des Punkts um die aktuelle y-Position des Asteroiden
+        }
+    }
+
+
 
     /* *** Aufgabe (3c) *** */
 
@@ -126,7 +132,6 @@ public class Asteroid extends SpaceObject {
             newAsteroids.add(createNewAsteroid(AsteroidSize.SMALL));
             newAsteroids.add(createNewAsteroid(AsteroidSize.TINY));
         }
-
         return newAsteroids;
     }
 
@@ -173,7 +178,6 @@ public class Asteroid extends SpaceObject {
             this.shape.get(i).x += this.x;
             this.shape.get(i).y += this.y;
         }
-
     }
 
     // https://cglab.ca/~sander/misc/ConvexGeneration/convex.html
