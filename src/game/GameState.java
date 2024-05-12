@@ -233,7 +233,6 @@ public class GameState {
     // ---Move objects---
 
     /* *** Aufgabe (2b) *** */
-
     public void moveObjects() {
         moveShip();
         moveMissiles();
@@ -264,14 +263,12 @@ public class GameState {
         }
     }
 
-    // move asteroids
     private void moveAsteroids() {
         Iterator<Asteroid> iterator = asteroids.iterator();
         while (iterator.hasNext()) {
             Asteroid asteroid = iterator.next();
             asteroid.move();
 
-            // Entfernen des Asteroiden, wenn er außerhalb des Spielfelds ist
             if (asteroid.getY() < -100 || asteroid.getY() > Settings.HEIGHT + 100) {
                 iterator.remove();
             }
@@ -284,8 +281,6 @@ public class GameState {
         while (iterator.hasNext()) {
             Missile missile = iterator.next();
             missile.move();
-
-            // Entfernen der Rakete, wenn sie außerhalb des Spielfelds ist
             if (missile.getY() < 0 || missile.getY() > Settings.HEIGHT) {
                 iterator.remove();
             }
