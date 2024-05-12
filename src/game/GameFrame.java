@@ -1,33 +1,19 @@
 package game;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-
 import main.Settings;
 import spaceObjects.Asteroid;
 import spaceObjects.Missile;
 import spaceObjects.Spaceship;
 import spaceObjects.Ufo;
-
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
 
 public class GameFrame extends JFrame {
 

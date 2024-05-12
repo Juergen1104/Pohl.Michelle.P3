@@ -1,13 +1,15 @@
 package game;
 
-public class PausableThread extends Thread{
+public class PausableThread extends Thread {
 
     private boolean paused = false;
     private final Object lock = new Object();
 
     public void pause() {
         paused = true;
+        lock();
     }
+
     protected void lock() {
         synchronized (lock) {
             if (paused) {
@@ -19,6 +21,7 @@ public class PausableThread extends Thread{
             }
         }
     }
+
     public void continueThread() {
         synchronized (lock) {
             paused = false;

@@ -1,16 +1,12 @@
 package game;
 
+import main.Settings;
+import spaceObjects.*;
+import spaceObjects.Asteroid.AsteroidSize;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
-
-import main.Settings;
-import spaceObjects.Asteroid;
-import spaceObjects.Asteroid.AsteroidSize;
-import spaceObjects.Missile;
-import spaceObjects.SpaceObject;
-import spaceObjects.Spaceship;
-import spaceObjects.Ufo;
 
 public class GameState {
 
@@ -375,14 +371,12 @@ public class GameState {
                                 this.asteroids.addAll(asteroid.splitAsteroid());
                             }
                         }
-
                         break;
                     }
                 }
             }
 
             // Collision between ufoMissiles and ship
-
             for (Missile missile : this.missilesUfo) {
                 if (this.polygonCollision(missile, this.spaceShip)) {
                     if (!this.shipInvincible) {
@@ -411,7 +405,6 @@ public class GameState {
                 }
             }
             // Collision between missiles and ufo
-
             for (Missile missile : this.missiles) {
                 if (this.polygonCollision(missile, this.ufo)) {
                     this.addScore(ufo.getPoints());
@@ -420,7 +413,6 @@ public class GameState {
                     return;
                 }
             }
-
         }
     }
 
@@ -473,7 +465,6 @@ public class GameState {
         }
         result[0] = min;
         result[1] = max;
-
         return result;
     }
 

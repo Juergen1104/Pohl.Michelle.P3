@@ -1,9 +1,9 @@
 package spaceObjects;
 
+import main.Settings;
+
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-
-import main.Settings;
 
 public class Spaceship extends SpaceObject {
 
@@ -15,10 +15,8 @@ public class Spaceship extends SpaceObject {
         this.height = 25;
         this.width = this.height;
         this.radiant = 1.5 * Math.PI;
-
         // shape
         this.setShape();
-
     }
 
     /* *** Aufgabe (2a) *** */
@@ -52,7 +50,6 @@ public class Spaceship extends SpaceObject {
     }
 
     public void move() {
-        //	TODO
         double vectorLength = Math.sqrt(getVelocityX() * getVelocityX() + getVelocityY() * getVelocityY());
 
         if (vectorLength > Settings.SHIP_DECELERATION) {
@@ -80,7 +77,6 @@ public class Spaceship extends SpaceObject {
         setX((float) (getPositionX() + getVelocityX()));
         setY((float) (getPositionY() + getVelocityY()));
         setShape();
-
     }
 
     //points to draw spaceship

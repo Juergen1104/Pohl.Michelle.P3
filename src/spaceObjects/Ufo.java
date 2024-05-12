@@ -1,11 +1,11 @@
 package spaceObjects;
 
+import main.Settings;
+
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-
-import main.Settings;
 
 public class Ufo extends SpaceObject {
 	private int points;
@@ -24,9 +24,7 @@ public class Ufo extends SpaceObject {
 	public int getPoints() {
 		return this.points;
 	}
-
 	
-	//sets hitbox for ufo shape
 	public List<Point2D.Double> getBoundingBox() {
 		ArrayList<Point2D.Double> boundingBox = new ArrayList<Point2D.Double>();
 		boundingBox
@@ -79,7 +77,6 @@ public class Ufo extends SpaceObject {
 			this.setRandomPosition();
 		}
 		this.shape = this.getBoundingBox();
-
 	}
 
 	/* *** Aufgabe (4a) *** */

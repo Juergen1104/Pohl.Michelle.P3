@@ -3,9 +3,7 @@ package game;
 import main.Settings;
 import spaceObjects.Spaceship;
 import spaceObjects.Ufo;
-
 import java.util.concurrent.ThreadLocalRandom;
-
 import static main.Settings.UFO_SPAWNRATE;
 
 public class GameController {
@@ -77,8 +75,9 @@ public class GameController {
 
     /* *** Aufgabe (4d) *** */
     public void togglePause() {
+
         if (gamePaused) {
-            // Fortsetzen aller Threads
+            // continue all
             guiThread.continueThread();
             gameThread.continueThread();
             spawnThread.continueThread();
@@ -86,7 +85,7 @@ public class GameController {
             invincibilityThread.continueThread();
             increaseDifficultyThread.continueThread();
         } else {
-            // Pausieren aller Threads
+            // pause all
             guiThread.pause();
             gameThread.pause();
             spawnThread.pause();
@@ -94,7 +93,7 @@ public class GameController {
             invincibilityThread.pause();
             increaseDifficultyThread.pause();
         }
-        // Umkehrung des gamePaused-Status
+        // switch
         gamePaused = !gamePaused;
 
         // refresh gui for pause screen
@@ -106,7 +105,6 @@ public class GameController {
     private class GuiThread extends PausableThread {
         @Override
         public void run() {
-            // Ändere den Namen des Threads
             Thread.currentThread().setName("GUI Thread");
 
             while (!Thread.interrupted()) {
@@ -114,10 +112,8 @@ public class GameController {
                 updateGui();
 
                 try {
-                    // Pausiere den Thread für den angegebenen Zeitraum
                     sleep(Settings.GUI_DELAY);
                 } catch (InterruptedException e) {
-                    // Behandlung der Unterbrechung
                     Thread.currentThread().interrupt();
                 }
             }
@@ -135,18 +131,14 @@ public class GameController {
         }
         this.spawnThread = new SpawnThread();
         spawnThread.start();
-
         if (ufoThread == null || !ufoThread.isAlive()) {
             ufoThread = new UfoThread();
             ufoThread.start();
         }
-
         invincibilityThread = new InvincibilityThread();
         invincibilityThread.start();
-
         increaseDifficultyThread = new IncreaseDifficultyThread();
         increaseDifficultyThread.start();
-
     }
 
     private void interruptThreads() {
@@ -169,7 +161,6 @@ public class GameController {
             increaseDifficultyThread.interrupt();
             increaseDifficultyThread = null;
         }
-
     }
 
     public void startInvincibleThread() {
@@ -181,11 +172,9 @@ public class GameController {
     /* *** Aufgabe (2b) *** */
 
     private class GameThread extends PausableThread {
-        private GameController gameController;
 
         public GameThread(GameController gameController) {
             //super("Game Thread");
-            this.gameController = gameController;
         }
 
         private boolean running = true;
@@ -203,7 +192,6 @@ public class GameController {
                 if (playerShip != null && gameControllerInstance.isActive() && !gameControllerInstance.isPaused()) {
                     playerShip.move();
                 }
-
                 try {
                     Thread.sleep(Settings.GAME_DELAY);
                 } catch (InterruptedException e) {
@@ -211,7 +199,6 @@ public class GameController {
                 }
             }
         }
-
         public void stopLoop() {
             running = false;
         }
@@ -223,7 +210,11 @@ public class GameController {
     private class SpawnThread extends PausableThread {
         @Override
         public void run() {
+            Thread.currentThread().setName("Spawn Thread");
+            int i=0;
             while (!Thread.interrupted()) {
+                System.out.println("SpawnThread" + i);
+                i++;
                 if (gameState.getAsteroids().size() < Settings.MAX_ASTEROIDS) {
                     gameState.spawnAsteroid();
                 }
@@ -236,9 +227,7 @@ public class GameController {
         }
     }
 
-
     /* *** Aufgabe (4a) *** */
-
     private class UfoThread extends PausableThread {
         @Override
         public void run() {
@@ -311,10 +300,10 @@ public class GameController {
                 gameState.increaseLevel();
 
                 if (currentDelay > 10) {
-                    currentDelay--; // Reduziere Verzögerung, solange sie über 10 ist
+                    currentDelay--;
                 }
                 if (currentMaxAsteroids < 40) {
-                    currentMaxAsteroids++; // Erhöhe maximale Anzahl an Asteroiden
+                    currentMaxAsteroids++;
                 }
 
                 if (gameState.getLevel() % 2 == 0) {

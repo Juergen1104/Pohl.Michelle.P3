@@ -1,7 +1,5 @@
 package spaceObjects;
 
-import game.GameController;
-import game.GameState;
 import main.Settings;
 
 import java.awt.geom.Point2D;
@@ -17,6 +15,7 @@ public class Asteroid extends SpaceObject {
     public enum AsteroidSize {
         TINY(20), SMALL(40), NORMAL(70), LARGE(90);
         public int value;
+
         private AsteroidSize(int value) {
             this.value = value;
         }
@@ -73,7 +72,6 @@ public class Asteroid extends SpaceObject {
         this.width = size.value;
         this.height = size.value;
         this.generateRandomShape();
-
     }
 
     public AsteroidSize getSize() {
@@ -92,7 +90,6 @@ public class Asteroid extends SpaceObject {
                 return 1000;
             default:
                 return 100;
-
         }
     }
 
@@ -111,10 +108,7 @@ public class Asteroid extends SpaceObject {
         }
     }
 
-
-
     /* *** Aufgabe (3c) *** */
-
     public List<Asteroid> splitAsteroid() {
 
         List<Asteroid> newAsteroids = new ArrayList<>();
