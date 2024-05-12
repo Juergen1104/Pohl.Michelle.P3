@@ -211,10 +211,7 @@ public class GameController {
         @Override
         public void run() {
             Thread.currentThread().setName("Spawn Thread");
-            int i=0;
             while (!Thread.interrupted()) {
-                System.out.println("SpawnThread" + i);
-                i++;
                 if (gameState.getAsteroids().size() < Settings.MAX_ASTEROIDS) {
                     gameState.spawnAsteroid();
                 }
