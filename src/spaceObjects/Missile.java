@@ -15,7 +15,6 @@ public class Missile extends SpaceObject {
 		this.vx = Math.cos(radiant) * 15;
 		this.vy = Math.sin(radiant) * 15;
 		this.setBoundingBox();
-
 	}
 
 	public double getRadius() {
@@ -24,7 +23,9 @@ public class Missile extends SpaceObject {
 	
 	/* *** Aufgabe (2b) *** */
 	public void move() {
-	//	TODO
+		setX((float)(getX() + getVx()));
+		setY((float)(getY() + getVy()));
+		setBoundingBox();
 	}
 
 	//box around missile for sat unit collision detection

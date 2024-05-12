@@ -1,5 +1,7 @@
 package spaceObjects;
 
+import main.Settings;
+
 import java.awt.geom.Point2D;
 import java.util.List;
 
@@ -11,11 +13,48 @@ public abstract class SpaceObject {
 
 	//coordinates
 	protected float x;
+
+	public float getX() {
+		return x;
+	}
+
+	public float getY() {
+		return y;
+	}
+
+	public double getVx() {
+		return vx;
+	}
+
+	public double getVy() {
+		return vy;
+	}
+
 	protected float y;
+
+	public void setX(float x) {
+		this.x = x;
+	}
+
+	public void setY(float y) {
+		this.y = y;
+	}
+
+	public void setVx(double vx) {
+		this.vx = vx;
+	}
+
+	public void setVy(double vy) {
+		this.vy = vy;
+	}
 
 	//speed vector
 	protected double vx;
 	protected double vy;
+
+	public void setRadiant(double radiant) {
+		this.radiant = radiant;
+	}
 
 	//angle
 	protected double radiant;
@@ -63,8 +102,19 @@ public abstract class SpaceObject {
 
 	
 	/* *** Aufgabe (2a) *** */
+	public void checkBoundaries() {
+		if (getPositionX() < 0) {
+			setX(Settings.WIDTH); // Bewegen Sie das Raumschiff zur rechten Seite
+		} else if (getPositionX() > Settings.WIDTH) {
+			setX(0); // Bewegen Sie das Raumschiff zur linken Seite
+		}
 
-	//checkBounds TODO
+		if (getPositionY() < 0) {
+			setY(Settings.HEIGHT); // Bewegen Sie das Raumschiff nach unten
+		} else if (getPositionY() > Settings.HEIGHT) {
+			setY(0); // Bewegen Sie das Raumschiff nach oben
+		}
+	}
 
 
 	//for SAT calculations
@@ -88,9 +138,5 @@ public abstract class SpaceObject {
 			edge[1] = this.shape.get(edgeNumber).y - this.shape.get(edgeNumber + 1).y;
 		}
 		return edge;
-
 	}
-
-
-
 }
